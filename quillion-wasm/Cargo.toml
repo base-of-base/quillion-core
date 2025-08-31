@@ -1,0 +1,47 @@
+[package]
+name = "quillion-wasm"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "quillion"
+crate-type = ["cdylib"]
+
+[dependencies]
+wasm-bindgen = "0.2"
+web-sys = { version = "0.3", features = [
+    "Node",
+    "Document",
+    "Element",
+    "HtmlElement",
+    "HtmlStyleElement",
+    "CssStyleSheet",
+    "WebSocket",
+    "MessageEvent",
+    "PopStateEvent",
+    "Window",
+    "HtmlVideoElement",
+    "MouseEvent",
+    "Event",
+    "Text",
+    "DocumentFragment",
+    "NodeList",
+    "HtmlImageElement",
+    "CssStyleDeclaration",
+    "console",
+] }
+serde = { version = "1", features = ["derive"] }
+gloo-net = "0.4"
+serde_json = "1.0.142"
+js-sys = "0.3"
+rand = { version = "0.8", features = ["getrandom"] }
+getrandom = { version = "0.2", features = ["js"] }
+thiserror = "1.0"
+once_cell = "1.21.3"
+regex = "1.11.1"
+x25519-dalek = { version = "2.0.0", features = ["static_secrets"] }
+aes-gcm = { version = "0.10" }
+base64 = "0.22.1"
+sha2 = "0.10.9"
+hkdf = "0.12.4"
+lazy_static = "1.5.0"
