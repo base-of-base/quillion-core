@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="ws-gateway" content="ws://127.0.0.1:1337">
     <title>Test</title>
-  <link rel="modulepreload" href="/quillion-wasm-40f3f700fd00da29.js" crossorigin="anonymous" integrity="sha384-8sEP0R74wy/K0MIEszRtqowvoZYX1SuLSK2CaT1RnJk/dtxwUnNl5paUvsyc6sov"><link rel="preload" href="/quillion-wasm-40f3f700fd00da29_bg.wasm" crossorigin="anonymous" integrity="sha384-EqKH9C9IpC0b00gkDYN+ZYIkJ4WDupVRvfDXYhLFqsciNGE4lgMPIbnWLe1S+p6U" as="fetch" type="application/wasm"></head>
+  <link rel="modulepreload" href="/quillion-wasm-28cda2dd674f18ac.js" crossorigin="anonymous" integrity="sha384-yW9dKjQoVoKuFtdK6oY8gyZiJjnM+15Utvuos7DqeL+voMXdB8JgtCp1rDiwafyu"><link rel="preload" href="/quillion-wasm-28cda2dd674f18ac_bg.wasm" crossorigin="anonymous" integrity="sha384-JsDIOuBGpwtvrwUACRHI+2AlGZaTE+G+cZ+UuTyCUHZUyGZkKTbpGOZtrJe5c+QF" as="fetch" type="application/wasm"></head>
   <body>
     <style>
       body {
@@ -20,8 +20,8 @@
     </script>
   
 <script type="module">
-import init, * as bindings from '/quillion-wasm-40f3f700fd00da29.js';
-const wasm = await init({ module_or_path: '/quillion-wasm-40f3f700fd00da29_bg.wasm' });
+import init, * as bindings from '/quillion-wasm-28cda2dd674f18ac.js';
+const wasm = await init({ module_or_path: '/quillion-wasm-28cda2dd674f18ac_bg.wasm' });
 
 
 window.wasmBindings = bindings;

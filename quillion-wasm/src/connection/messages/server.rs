@@ -18,4 +18,6 @@ pub struct ServerMessage {
     pub encrypted_payload: Option<String>,
     #[serde(default)]
     pub nonce: Option<String>,
+    #[serde(default)]
+    pub url: Option<String>,
 }

@@ -3,9 +3,9 @@ mod error;
 mod utils;
 mod vdom;
 
-pub use utils::MetaConfig;
 pub use connection::ClientConnection;
 pub use error::AppError;
+pub use utils::MetaConfig;
 pub use vdom::VirtualDom;
 
 use wasm_bindgen::JsValue;
@@ -15,8 +15,8 @@ use wasm_bindgen::prelude::*;
 pub fn start() -> Result<(), JsValue> {
     let config = MetaConfig::from_document()?;
 
-    let connection = ClientConnection::new(&config.ws_gateway)
-        .map_err(|e| JsValue::from_str(&e.to_string()))?;
+    let connection =
+        ClientConnection::new(&config.ws_gateway).map_err(|e| JsValue::from_str(&e.to_string()))?;
 
     let vdom = VirtualDom::new(connection.get_crypto_ref());
 

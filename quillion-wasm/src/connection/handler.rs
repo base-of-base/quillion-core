@@ -72,9 +72,16 @@ impl MessageHandler {
                                                     &inner_msg.path,
                                                     &inner_msg.css_rules,
                                                 );
+                                            } else if inner_msg.action == "redirect" {
+                                                if let Some(url) = &inner_msg.url {
+                                                    if let Some(win) = web_sys::window() {
+                                                        let _ = win.location().set_href(url);
+                                                    }
+                                                }
                                             }
                                         }
                                     }
+
                                     Err(e) => {
                                         let formatted_error = format_wasm_traceback(&e.to_string());
                                         log(&e.to_string());

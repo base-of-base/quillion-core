@@ -1,5 +1,5 @@
-pub mod formatter;
 pub mod config;
+pub mod formatter;
 
-pub use formatter::*;
 pub use config::*;
+pub use formatter::*;

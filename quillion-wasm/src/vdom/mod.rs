@@ -20,12 +20,10 @@ use web_sys::{WebSocket, Window};
 pub struct VirtualDom {
     previous_vdom: Lazy<Mutex<Option<ElementContent>>>,
     style_tag_id: &'static str,
-    // Corrected to hold Rc<RefCell<Crypto>>
     crypto: Rc<RefCell<Crypto>>,
 }
 
 impl VirtualDom {
-    // The new() function for VirtualDom now takes the correct crypto type
     pub fn new(crypto: Rc<RefCell<Crypto>>) -> Self {
         VirtualDom {
             previous_vdom: Lazy::new(|| Mutex::new(None)),
@@ -34,7 +32,6 @@ impl VirtualDom {
         }
     }
 
-    /// Renders a new page based on the provided content, utilizing a diffing algorithm.
     pub fn render_page(
         &self,
         window: &Window,
@@ -46,7 +43,6 @@ impl VirtualDom {
         let document = window.document().expect("Document should exist");
         let body = document.body().expect("Document body should exist");
 
-        // Instantiate DomRenderer by passing the stored crypto
         let renderer = DomRenderer::new(self.crypto.clone());
         let patcher = Patcher::new(&renderer);
         let differ = Differ::new(&renderer, &patcher);
