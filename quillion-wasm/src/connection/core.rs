@@ -13,6 +13,7 @@ pub struct ClientConnection {
     pub window: Window,
     pub vdom: Rc<RefCell<Option<VirtualDom>>>,
     pub crypto: Rc<RefCell<Crypto>>,
+    pub ws_gateway: String, 
 }
 
 impl ClientConnection {
@@ -26,6 +27,7 @@ impl ClientConnection {
             window,
             vdom: Rc::new(RefCell::new(None)),
             crypto: Rc::new(RefCell::new(Crypto::new())),
+            ws_gateway: server_url.to_string(),
         })
     }
 

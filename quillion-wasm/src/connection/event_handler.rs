@@ -8,6 +8,7 @@ use crate::connection::{ClientMessage, MessageHandler, Messaging};
 use crate::error::AppError;
 use crate::utils::log;
 use std::cell::RefCell;
+use crate::VirtualDom;
 use std::rc::Rc;
 
 pub struct EventHandler;
@@ -23,6 +24,71 @@ impl EventHandler {
         Self::setup_popstate_handler(&conn.ws, &conn.window, &conn.crypto)?;
         Self::setup_error_handler(&conn.ws)?;
         Self::setup_open_handler(&conn.ws, &conn.crypto)?;
+        Self::setup_close_handler(
+            &conn.ws,
+            &conn.window.clone(),
+            conn.vdom.clone(),
+            &conn.crypto,
+            &conn.ws_gateway,
+        )?;
+        Ok(())
+    }
+
+    fn setup_close_handler(
+        ws: &WebSocket,
+        window: &Window,
+        vdom: Rc<RefCell<Option<VirtualDom>>>,
+        crypto: &Rc<RefCell<Crypto>>,
+        ws_gateway: &str,
+    ) -> Result<(), AppError> {
+        let ws_clone = ws.clone();
+        let window_clone = window.clone();
+        let vdom_clone = vdom.clone();
+        let crypto_clone = crypto.clone();
+        let ws_gateway = ws_gateway.to_string();
+        
+        let onclose_callback = Closure::<dyn FnMut()>::new(move || {
+            let window_clone = window_clone.clone();
+            let vdom = vdom_clone.clone();
+            let crypto = crypto_clone.clone();
+            let ws_gateway = ws_gateway.clone();
+
+            let window_value = window_clone.clone();
+            
+            let _ = window_clone
+                .set_timeout_with_callback_and_timeout_and_arguments_0(
+                    &Closure::once_into_js(move || {
+                        let new_ws = match WebSocket::new(&ws_gateway) {
+                            Ok(ws) => ws,
+                            Err(_e) => {
+                                return ();
+                            }
+                        };
+
+                        if let Err(_e) = Self::setup_open_handler(&new_ws, &crypto) {
+                            return ();
+                        }
+
+                        if let Err(_e) = MessageHandler::setup_message_handler(&new_ws, &window_value, vdom.clone(), &crypto) {
+                            return ();
+                        }
+
+                        if let Err(_e) = Self::setup_error_handler(&new_ws) {
+                            return ();
+                        }
+
+                        if let Err(_e) = Self::setup_close_handler(&new_ws, &window_value, vdom, &crypto, &ws_gateway) {
+                            return ();
+                        }
+                    })
+                    .as_ref()
+                    .unchecked_ref(),
+                    1000,
+                );
+        });
+
+        ws_clone.set_onclose(Some(onclose_callback.as_ref().unchecked_ref()));
+        onclose_callback.forget();
         Ok(())
     }
 
@@ -53,11 +119,11 @@ impl EventHandler {
     }
 
     fn setup_error_handler(ws: &WebSocket) -> Result<(), AppError> {
-        let ws = ws.clone();
+        let ws_clone = ws.clone();
         let onerror_callback = Closure::<dyn FnMut(_)>::new(move |e: ErrorEvent| {
             log(&format!("WebSocket error: {:?}", e));
         });
-        ws.set_onerror(Some(onerror_callback.as_ref().unchecked_ref()));
+        ws_clone.set_onerror(Some(onerror_callback.as_ref().unchecked_ref()));
         onerror_callback.forget();
         Ok(())
     }
