@@ -1,4 +1,4 @@
-name: Build
+name: Build and Release WASM
 
 on:
   push:
@@ -26,6 +26,7 @@ jobs:
         cd quillion-wasm
         VERSION=$(grep '^version' Cargo.toml | head -1 | cut -d '"' -f 2)
         echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
 
     - name: Build
       run: |
@@ -35,7 +36,7 @@ jobs:
     - name: Upload 
       uses: actions/upload-artifact@v4
       with:
-        name: wasm-package-${{ steps.get_version.outputs.version }}
+        name: wasm-package
         path: |
           quillion-wasm/pkg/
           quillion-wasm/Cargo.toml
@@ -49,7 +50,7 @@ jobs:
     - name: Download
       uses: actions/download-artifact@v4
       with:
-        name: wasm-package-${{ needs.build-wasm.outputs.version }}
+        name: wasm-package
         path: wasm-package
 
     - name: Get version
