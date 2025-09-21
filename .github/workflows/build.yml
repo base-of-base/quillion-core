@@ -1,0 +1,27 @@
+name: Build 
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-wasm:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install wasm-pack
+      run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+    - name: Build
+      run: |
+        cd quillion-wasm
+        wasm-pack build --target web --release
+
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: wasm-package
+        path: quillion-wasm/pkg/
