@@ -13,7 +13,7 @@ pub struct ClientConnection {
     pub window: Window,
     pub vdom: Rc<RefCell<Option<VirtualDom>>>,
     pub crypto: Rc<RefCell<Crypto>>,
-    pub ws_gateway: String, 
+    pub ws_gateway: String,
 }
 
 impl ClientConnection {

@@ -2,13 +2,13 @@ use wasm_bindgen::JsCast;
 use wasm_bindgen::prelude::*;
 use web_sys::{ErrorEvent, PopStateEvent, WebSocket, Window};
 
+use crate::VirtualDom;
 use crate::connection::ClientConnection;
 use crate::connection::Crypto;
 use crate::connection::{ClientMessage, MessageHandler, Messaging};
 use crate::error::AppError;
 use crate::utils::log;
 use std::cell::RefCell;
-use crate::VirtualDom;
 use std::rc::Rc;
 
 pub struct EventHandler;
@@ -46,7 +46,7 @@ impl EventHandler {
         let vdom_clone = vdom.clone();
         let crypto_clone = crypto.clone();
         let ws_gateway = ws_gateway.to_string();
-        
+
         let onclose_callback = Closure::<dyn FnMut()>::new(move || {
             let window_clone = window_clone.clone();
             let vdom = vdom_clone.clone();
@@ -54,37 +54,47 @@ impl EventHandler {
             let ws_gateway = ws_gateway.clone();
 
             let window_value = window_clone.clone();
-            
-            let _ = window_clone
-                .set_timeout_with_callback_and_timeout_and_arguments_0(
-                    &Closure::once_into_js(move || {
-                        let new_ws = match WebSocket::new(&ws_gateway) {
-                            Ok(ws) => ws,
-                            Err(_e) => {
-                                return ();
-                            }
-                        };
 
-                        if let Err(_e) = Self::setup_open_handler(&new_ws, &crypto) {
+            let _ = window_clone.set_timeout_with_callback_and_timeout_and_arguments_0(
+                &Closure::once_into_js(move || {
+                    let new_ws = match WebSocket::new(&ws_gateway) {
+                        Ok(ws) => ws,
+                        Err(_e) => {
                             return ();
                         }
+                    };
 
-                        if let Err(_e) = MessageHandler::setup_message_handler(&new_ws, &window_value, vdom.clone(), &crypto) {
-                            return ();
-                        }
+                    if let Err(_e) = Self::setup_open_handler(&new_ws, &crypto) {
+                        return ();
+                    }
 
-                        if let Err(_e) = Self::setup_error_handler(&new_ws) {
-                            return ();
-                        }
+                    if let Err(_e) = MessageHandler::setup_message_handler(
+                        &new_ws,
+                        &window_value,
+                        vdom.clone(),
+                        &crypto,
+                    ) {
+                        return ();
+                    }
 
-                        if let Err(_e) = Self::setup_close_handler(&new_ws, &window_value, vdom, &crypto, &ws_gateway) {
-                            return ();
-                        }
-                    })
-                    .as_ref()
-                    .unchecked_ref(),
-                    1000,
-                );
+                    if let Err(_e) = Self::setup_error_handler(&new_ws) {
+                        return ();
+                    }
+
+                    if let Err(_e) = Self::setup_close_handler(
+                        &new_ws,
+                        &window_value,
+                        vdom,
+                        &crypto,
+                        &ws_gateway,
+                    ) {
+                        return ();
+                    }
+                })
+                .as_ref()
+                .unchecked_ref(),
+                1000,
+            );
         });
 
         ws_clone.set_onclose(Some(onclose_callback.as_ref().unchecked_ref()));

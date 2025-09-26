@@ -13,4 +13,10 @@ pub enum ClientMessage<'a> {
     EncryptedMessage { data: String, nonce: String },
     #[serde(rename = "client_error")]
     ClientError { error: String },
+    #[serde(rename = "event_callback")]
+    EventCallback {
+        id: &'a str,
+        event_type: String,
+        event_data: String,
+    },
 }
