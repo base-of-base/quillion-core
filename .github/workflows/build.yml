@@ -30,7 +30,6 @@ jobs:
 
     - name: Build
       run: |
-        cd quillion-wasm
         wasm-pack build --target web --release
 
     - name: Upload 
