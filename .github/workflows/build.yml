@@ -23,7 +23,6 @@ jobs:
     - name: Get version
       id: get_version
       run: |
-        cd quillion-wasm
         VERSION=$(grep '^version' Cargo.toml | head -1 | cut -d '"' -f 2)
         echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "VERSION=$VERSION" >> $GITHUB_ENV
