@@ -37,8 +37,8 @@ jobs:
       with:
         name: wasm-package
         path: |
-          quillion-wasm/pkg/
-          quillion-wasm/Cargo.toml
+          pkg/
+          Cargo.toml
 
   create-release:
     runs-on: ubuntu-latest
